@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SH 2026년 2차 행복주택 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; color:#1a1a2e; background:#f4f6fb; }
+  header { background:#1a3a6b; color:#fff; padding:14px 18px; }
+  header h1 { margin:0; font-size:18px; }
+  header p { margin:4px 0 0; font-size:12px; opacity:.85; }
+  #wrap { display:flex; height:calc(100vh - 62px); }
+  #sidebar { width:320px; min-width:320px; overflow-y:auto; background:#fff; border-right:1px solid #e0e4ec; padding:14px; }
+  #main { flex:1; display:flex; flex-direction:column; }
+  #map { flex:1; min-height:300px; }
+  .filter-block { margin-bottom:16px; }
+  .filter-block h3 { margin:0 0 8px; font-size:13px; color:#1a3a6b; text-transform:uppercase; letter-spacing:.5px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { padding:5px 10px; border-radius:14px; border:1px solid #cdd4e0; background:#fff; font-size:12px; cursor:pointer; user-select:none; transition:.15s; }
+  .chip.active { color:#fff; border-color:transparent; }
+  .chip[data-k="대학생"].active{background:#e07a5f}
+  .chip[data-k="청년"].active{background:#3d7ea6}
+  .chip[data-k="신혼부부"].active{background:#5b8c5a}
+  .chip[data-k="고령자"].active{background:#9b59b6}
+  .chip[data-k="주거급여수급자"].active{background:#c0392b}
+  .chip[data-k="신규"].active,.chip[data-k="재공급"].active,.chip.gu.active{background:#1a3a6b}
+  .rangerow { margin:8px 0; font-size:12px; }
+  .rangerow label { display:block; margin-bottom:4px; color:#555; }
+  input[type=range]{ width:100%; }
+  .stat { font-size:12px; color:#444; background:#eef2fa; border-radius:8px; padding:8px 10px; margin-bottom:12px; }
+  .stat b { color:#1a3a6b; font-size:14px; }
+  #reset { width:100%; padding:8px; border:none; background:#1a3a6b; color:#fff; border-radius:8px; cursor:pointer; font-size:13px; margin-top:4px; }
+  .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+  .leaflet-popup-content{font-size:13px;line-height:1.5;margin:10px 12px;}
+  .pop-name{font-weight:700;font-size:14px;color:#1a3a6b;}
+  .pop-addr{color:#777;font-size:11px;margin-bottom:6px;}
+  .pop-unit{border-top:1px solid #eee;padding:5px 0;}
+  .pop-tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;color:#fff;margin-right:4px;}
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e0e4ec;}
+  .tab-bar button{flex:1;padding:8px;border:none;background:none;cursor:pointer;font-size:13px;color:#888;border-bottom:2px solid transparent;}
+  .tab-bar button.on{color:#1a3a6b;font-weight:700;border-bottom-color:#1a3a6b;}
+  #listView{flex:1;overflow-y:auto;padding:12px;display:none;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid #eee;}
+  th{background:#eef2fa;color:#1a3a6b;position:sticky;top:0;}
+  tr:hover{background:#f8faff;}
+  .note{font-size:11px;color:#999;padding:8px 12px;background:#fffbe6;border-top:1px solid #f0e6c0;}
+  @media(max-width:720px){#wrap{flex-direction:column;height:auto;}#sidebar{width:100%;min-width:0;}#map{height:55vh;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏠 SH 2026년 2차 행복주택 · 신청 가능 단지 지도</h1>
+  <p>인터넷 청약 2026.9.9~9.11 · 총 79개 단지 (신규 2 · 재공급 77) · 시세 60~80% 임대</p>
+</header>
+<div id="wrap">
+  <aside id="sidebar">
+    <div class="stat">표시 중: <b id="cCount">0</b>개 단지 / <b id="cUnits">0</b>개 유형</div>
+    <div class="filter-block">
+      <h3>공급 구분(계층)</h3>
+      <div class="chips" id="fClass">
+        <span class="chip active" data-k="대학생">대학생</span>
+        <span class="chip active" data-k="청년">청년</span>
+        <span class="chip active" data-k="신혼부부">신혼부부</span>
+        <span class="chip active" data-k="고령자">고령자</span>
+        <span class="chip active" data-k="주거급여수급자">주거급여</span>
+      </div>
+    </div>
+    <div class="filter-block">
+      <h3>공급 유형</h3>
+      <div class="chips" id="fType">
+        <span class="chip active" data-k="신규">신규공급</span>
+        <span class="chip active" data-k="재공급">재공급</span>
+      </div>
+    </div>
+    <div class="filter-block">
+      <h3>자치구</h3>
+      <div class="chips" id="fGu"></div>
+    </div>
+    <div class="filter-block">
+      <h3>가격 범위</h3>
+      <div class="rangerow">
+        <label>임대보증금 최대: <b id="depLbl">3.0억</b></label>
+        <input type="range" id="depMax" min="0" max="230000" step="5000" value="230000">
+      </div>
+      <div class="rangerow">
+        <label>월임대료 최대: <b id="rentLbl">90만원</b></label>
+        <input type="range" id="rentMax" min="0" max="900000" step="10000" value="900000">
+      </div>
+      <div class="rangerow">
+        <label>전용면적 최소: <b id="areaLbl">0㎡</b></label>
+        <input type="range" id="areaMin" min="0" max="60" step="1" value="0">
+      </div>
+    </div>
+    <button id="reset">필터 초기화</button>
+  </aside>
+  <div id="main">
+    <div class="tab-bar">
+      <button id="tabMap" class="on">🗺️ 지도</button>
+      <button id="tabList">📋 목록</button>
+    </div>
+    <div id="map"></div>
+    <div id="listView"></div>
+    <div class="note">⚠️ 지도 위치는 단지명·자치구·법정동 기준의 <b>근사 좌표</b>입니다(공고문 13번 단지별 주소표 미포함분). 정확한 주소·평면도는 SH 인터넷청약시스템 전자팸플릿에서 확인하세요. 보증금·월세는 단지 대표금액이며 층·향에 따라 다를 수 있습니다. 청년 유형은 소득유무에 따라 금액이 다릅니다(높은 쪽=소득있음).</div>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// 계층 색상
+const COLOR={대학생:'#e07a5f',청년:'#3d7ea6',신혼부부:'#5b8c5a',고령자:'#9b59b6',주거급여수급자:'#c0392b'};
+// 데이터: t=계층, a=전용면적, tot=계약면적합계, d=보증금(천원,소득있음/기본), r=월세(원), d2/r2=소득없음(청년)
+const DATA=[
+// ── 신규 공급 ──
+{n:"두산위브더프레스티지",gu:"구로구",addr:"개봉동 199-4",type:"신규",lat:37.4954,lng:126.8580,units:[{t:"신혼부부",a:40.76,tot:89.53,d:109600,r:421000}]},
+{n:"창경궁롯데캐슬시그니처(삼선5)",gu:"성북구",addr:"삼선동 (서울리츠2호)",type:"신규",lat:37.5870,lng:127.0080,units:[
+  {t:"청년",a:39.39,tot:92.90,d:120960,r:463000,d2:114240,r2:437000},
+  {t:"신혼부부",a:39.39,tot:92.90,d:134400,r:514000},
+  {t:"고령자",a:39.39,tot:92.90,d:127680,r:489000}]},
+// ── 재공급 ──
+{n:"디에이치 아너힐즈",gu:"강남구",addr:"개포동",type:"재공급",lat:37.4790,lng:127.0640,units:[{t:"신혼부부",a:49.40,tot:109.46,d:181600,r:726000}]},
+{n:"강동리엔파크11단지",gu:"강동구",addr:"강일동",type:"재공급",lat:37.5680,lng:127.1750,units:[
+  {t:"청년",a:29.99,tot:84.21,d:84960,r:340000,d2:80240,r2:321000},
+  {t:"고령자",a:29.98,tot:83.75,d:89680,r:359000}]},
+{n:"강동리엔파크14단지",gu:"강동구",addr:"강일동",type:"재공급",lat:37.5700,lng:127.1720,units:[
+  {t:"청년",a:36.87,tot:85.53,d:104400,r:418000,d2:98600,r2:394000},
+  {t:"고령자",a:29.84,tot:69.51,d:88920,r:356000}]},
+{n:"고덕 그라시움",gu:"강동구",addr:"상일동",type:"재공급",lat:37.5560,lng:127.1560,units:[{t:"신혼부부",a:59.79,tot:132.60,d:162400,r:648000}]},
+{n:"롯데캐슬베네루체",gu:"강동구",addr:"고덕동",type:"재공급",lat:37.5590,lng:127.1610,units:[{t:"신혼부부",a:59.98,tot:135.50,d:156800,r:626000}]},
+{n:"고덕온빛채",gu:"강동구",addr:"고덕동",type:"재공급",lat:37.5540,lng:127.1540,units:[{t:"청년",a:36.62,tot:87.38,d:105840,r:423000,d2:99960,r2:400000}]},
+{n:"푸르내(서울리츠1호)",gu:"강동구",addr:"고덕동",type:"재공급",lat:37.5570,lng:127.1580,units:[{t:"고령자",a:28.01,tot:59.91,d:84460,r:274000}]},
+{n:"꿈의숲 효성해링턴플레이스",gu:"강북구",addr:"미아동",type:"재공급",lat:37.6180,lng:127.0300,units:[{t:"신혼부부",a:46.68,tot:98.32,d:96000,r:406000}]},
+{n:"꿈의숲 롯데캐슬(미아4)",gu:"강북구",addr:"미아동 (서울리츠2호)",type:"재공급",lat:37.6250,lng:127.0250,units:[{t:"신혼부부",a:39.74,tot:85.59,d:128330,r:502000}]},
+{n:"가양동 1457-1 모듈러 행복주택",gu:"강서구",addr:"가양동 1457-1",type:"재공급",lat:37.5670,lng:126.8560,units:[{t:"청년",a:16.05,tot:33.51,d:37440,r:162000,d2:35360,r2:153000}]},
+{n:"e편한세상 염창",gu:"강서구",addr:"염창동",type:"재공급",lat:37.5480,lng:126.8720,units:[{t:"신혼부부",a:51.75,tot:105.31,d:141600,r:518000}]},
+{n:"방화스카이포레",gu:"강서구",addr:"방화동",type:"재공급",lat:37.5770,lng:126.8130,units:[
+  {t:"청년",a:29.09,tot:57.11,d:72720,r:266000,d2:68680,r2:252000},
+  {t:"신혼부부",a:44.03,tot:80.05,d:122400,r:449000}]},
+{n:"e편한세상서울대입구(봉천12-2)",gu:"관악구",addr:"봉천동 (서울리츠2호)",type:"재공급",lat:37.4820,lng:126.9520,units:[{t:"대학생",a:30.11,tot:68.04,d:102680,r:372000}]},
+{n:"e편한세상 서울대입구2차(봉천12-1)",gu:"관악구",addr:"봉천동 (서울리츠2호)",type:"재공급",lat:37.4830,lng:126.9540,units:[{t:"신혼부부",a:39.79,tot:87.53,d:154800,r:574000}]},
+{n:"건대프라하임3차",gu:"광진구",addr:"화양동 94-9",type:"재공급",lat:37.5430,lng:127.0700,units:[{t:"대학생",a:22.72,tot:30.84,d:63920,r:233000}]},
+{n:"어울채(서울리츠1호)",gu:"광진구",addr:"광진구",type:"재공급",lat:37.5480,lng:127.0850,units:[{t:"신혼부부",a:39.02,tot:93.33,d:136400,r:500000}]},
+{n:"천왕연지마을 1",gu:"구로구",addr:"천왕동",type:"재공급",lat:37.4870,lng:126.8380,units:[{t:"고령자",a:32.64,tot:73.37,d:53200,r:226000}]},
+{n:"천왕연지마을 2",gu:"구로구",addr:"천왕동",type:"재공급",lat:37.4880,lng:126.8390,units:[{t:"신혼부부",a:40.10,tot:99.05,d:69600,r:296000}]},
+{n:"천왕이펜하우스8단지",gu:"구로구",addr:"천왕동",type:"재공급",lat:37.4860,lng:126.8420,units:[
+  {t:"청년",a:36.87,tot:79.38,d:65520,r:246000,d2:61880,r2:232000},
+  {t:"고령자",a:29.38,tot:63.25,d:55480,r:208000},
+  {t:"신혼부부",a:45.77,tot:98.54,d:90400,r:339000}]},
+{n:"항동 하버라인 지구",gu:"구로구",addr:"항동",type:"재공급",lat:37.4790,lng:126.8280,units:[
+  {t:"고령자",a:29.69,tot:71.12,d:60800,r:228000},
+  {t:"고령자",a:39.69,tot:98.66,d:81320,r:305000},
+  {t:"청년",a:29.69,tot:71.12,d:57600,r:216000,d2:54400,r2:204000},
+  {t:"신혼부부",a:39.69,tot:94.50,d:85600,r:321000}]},
+{n:"숲에리움(오류1동 청신호)",gu:"구로구",addr:"오류동",type:"재공급",lat:37.4930,lng:126.8420,units:[
+  {t:"대학생",a:16.99,tot:37.00,d:48280,r:205000},
+  {t:"대학생",a:17.08,tot:37.18,d:48280,r:205000},
+  {t:"청년",a:21.04,tot:46.33,d:62640,r:266000,d2:59160,r2:252000}]},
+{n:"노원센트럴푸르지오(상계4)",gu:"노원구",addr:"상계동 (서울리츠2호)",type:"재공급",lat:37.6620,lng:127.0680,units:[{t:"고령자",a:39.02,tot:84.25,d:110580,r:433000}]},
+{n:"e편한세상 청계센트럴포레(용두5)",gu:"동대문구",addr:"용두동 (서울리츠2호)",type:"재공급",lat:37.5760,lng:127.0330,units:[{t:"청년",a:39.92,tot:98.91,d:114600,r:410000,d2:108230,r2:387000}]},
+{n:"보라매자이",gu:"동작구",addr:"신대방동",type:"재공급",lat:37.4930,lng:126.9200,units:[{t:"신혼부부",a:59.94,tot:118.02,d:180800,r:678000}]},
+{n:"상도 청석채",gu:"동작구",addr:"상도동",type:"재공급",lat:37.5020,lng:126.9450,units:[{t:"대학생",a:20.61,tot:42.82,d:43520,r:163000}]},
+{n:"아크로리버하임(흑석7)",gu:"동작구",addr:"흑석동 (서울리츠2호)",type:"재공급",lat:37.5080,lng:126.9620,units:[{t:"신혼부부",a:39.77,tot:77.79,d:191600,r:718000}]},
+{n:"학수복합(학수)",gu:"동작구",addr:"동작구 (서울리츠2호)",type:"재공급",lat:37.5050,lng:126.9500,units:[{t:"대학생",a:21.11,tot:36.12,d:55420,r:226000}]},
+{n:"공덕SK리더스뷰_2단지",gu:"마포구",addr:"공덕동",type:"재공급",lat:37.5440,lng:126.9520,units:[{t:"신혼부부",a:40.70,tot:99.36,d:125600,r:493000}]},
+{n:"공덕동 크로시티",gu:"마포구",addr:"공덕동",type:"재공급",lat:37.5450,lng:126.9540,units:[{t:"청년",a:36.67,tot:105.36,d:134640,r:527000,d2:127160,r2:498000}]},
+{n:"마포자이더센트리지(염리2)",gu:"마포구",addr:"염리동 (서울리츠2호)",type:"재공급",lat:37.5490,lng:126.9450,units:[{t:"청년",a:34.80,tot:83.51,d:142020,r:496000,d2:134130,r2:469000}]},
+{n:"마포그랑자이(대흥2)",gu:"마포구",addr:"대흥동 (서울리츠2호)",type:"재공급",lat:37.5490,lng:126.9430,units:[
+  {t:"고령자",a:39.99,tot:87.38,d:181540,r:695000},
+  {t:"신혼부부",a:45.98,tot:100.04,d:220080,r:832000}]},
+{n:"북한산두산위브(홍은14)",gu:"서대문구",addr:"홍은동 (서울리츠2호)",type:"재공급",lat:37.5920,lng:126.9430,units:[{t:"청년",a:33.05,tot:76.65,d:116640,r:439000,d2:110160,r2:415000}]},
+{n:"DMC에코자이(가재울6)",gu:"서대문구",addr:"남가좌동 (서울리츠2호)",type:"재공급",lat:37.5790,lng:126.9130,units:[{t:"신혼부부",a:39.67,tot:98.90,d:143640,r:512000}]},
+{n:"서초선포레",gu:"서초구",addr:"서초구",type:"재공급",lat:37.4830,lng:127.0330,units:[
+  {t:"고령자",a:21.58,tot:55.69,d:68400,r:251000},
+  {t:"청년",a:20.52,tot:53.04,d:61920,r:227000,d2:58480,r2:214000}]},
+{n:"반포센트럴자이",gu:"서초구",addr:"반포동",type:"재공급",lat:37.5040,lng:127.0000,units:[{t:"신혼부부",a:59.98,tot:127.67,d:228800,r:897000}]},
+{n:"왕십리자이(하왕1-5)",gu:"성동구",addr:"하왕십리동 (서울리츠2호)",type:"재공급",lat:37.5640,lng:127.0270,units:[{t:"청년",a:38.19,tot:91.62,d:144360,r:596000,d2:136340,r2:563000}]},
+{n:"서울숲리버뷰자이(행당6)",gu:"성동구",addr:"행당동 (서울리츠2호)",type:"재공급",lat:37.5560,lng:127.0350,units:[{t:"청년",a:36.06,tot:78.00,d:145530,r:582000,d2:137440,r2:549000}]},
+{n:"금호파크힐스이편한세상(금호15)",gu:"성동구",addr:"금호동 (서울리츠2호)",type:"재공급",lat:37.5490,lng:127.0230,units:[{t:"고령자",a:30.32,tot:88.38,d:133640,r:544000}]},
+{n:"정릉 하늘마루",gu:"성북구",addr:"정릉동",type:"재공급",lat:37.6080,lng:127.0130,units:[
+  {t:"고령자",a:26.15,tot:60.47,d:76760,r:301000},
+  {t:"대학생",a:22.26,tot:51.54,d:58480,r:229000}]},
+{n:"보문파크뷰자이(보문3)",gu:"성북구",addr:"보문동 (서울리츠2호)",type:"재공급",lat:37.5850,lng:127.0190,units:[{t:"청년",a:29.96,tot:70.13,d:116640,r:433000,d2:110160,r2:409000}]},
+{n:"꿈의숲코오롱하늘채(장위2)",gu:"성북구",addr:"장위동 (서울리츠2호)",type:"재공급",lat:37.6130,lng:127.0530,units:[{t:"신혼부부",a:40.24,tot:97.99,d:132400,r:518000}]},
+{n:"래미안아트리치(석관2)",gu:"성북구",addr:"석관동 (서울리츠2호)",type:"재공급",lat:37.6080,lng:127.0620,units:[{t:"고령자",a:39.01,tot:97.12,d:115520,r:452000}]},
+{n:"래미안장위퍼스트하이(장위5)",gu:"성북구",addr:"장위동 (서울리츠2호)",type:"재공급",lat:37.6150,lng:127.0510,units:[{t:"청년",a:36.14,tot:79.58,d:99360,r:390000,d2:93840,r2:368000}]},
+{n:"꿈의숲아이파크(장위7)",gu:"성북구",addr:"장위동 (서울리츠2호)",type:"재공급",lat:37.6160,lng:127.0490,units:[{t:"신혼부부",a:40.47,tot:90.38,d:146690,r:538000}]},
+{n:"장위자이레디언트(장위4)",gu:"성북구",addr:"장위동 (서울리츠2호)",type:"재공급",lat:37.6140,lng:127.0500,units:[{t:"청년",a:39.91,tot:98.31,d:109620,r:420000,d2:103530,r2:396000}]},
+{n:"송파파크데일 3",gu:"송파구",addr:"거여동",type:"재공급",lat:37.4950,lng:127.1440,units:[{t:"청년",a:21.92,tot:48.54,d:57600,r:211000,d2:54400,r2:199000}]},
+{n:"잠실올림픽공원아이파크",gu:"송파구",addr:"방이동",type:"재공급",lat:37.5180,lng:127.1230,units:[{t:"신혼부부",a:59.97,tot:138.73,d:211200,r:774000}]},
+{n:"e편한세상 보라매2차",gu:"영등포구",addr:"신길동",type:"재공급",lat:37.4980,lng:126.9130,units:[{t:"고령자",a:59.97,tot:125.53,d:149720,r:597000}]},
+{n:"보라매 SK뷰(신길5)",gu:"영등포구",addr:"신길동 (서울리츠2호)",type:"재공급",lat:37.5000,lng:126.9150,units:[{t:"신혼부부",a:39.98,tot:88.35,d:159600,r:593000}]},
+{n:"용산데시앙포레(효창6)",gu:"용산구",addr:"효창동 (서울리츠2호)",type:"재공급",lat:37.5410,lng:126.9600,units:[{t:"신혼부부",a:45.64,tot:109.21,d:171140,r:642000}]},
+{n:"래미안베라힐즈(녹번1-2)",gu:"은평구",addr:"녹번동 (서울리츠2호)",type:"재공급",lat:37.6060,lng:126.9330,units:[
+  {t:"청년",a:38.28,tot:81.87,d:132480,r:530000,d2:125120,r2:500000},
+  {t:"신혼부부",a:43.74,tot:96.77,d:168400,r:674000}]},
+{n:"백련산SK VIEW IPARK(응암10)",gu:"은평구",addr:"응암동 (서울리츠2호)",type:"재공급",lat:37.5980,lng:126.9200,units:[
+  {t:"고령자",a:36.08,tot:73.32,d:104120,r:401000},
+  {t:"신혼부부",a:40.65,tot:82.13,d:123600,r:476000}]},
+{n:"백련산해모로(응암11)",gu:"은평구",addr:"응암동 (서울리츠2호)",type:"재공급",lat:37.5970,lng:126.9190,units:[{t:"청년",a:39.10,tot:89.70,d:108360,r:431000,d2:102340,r2:407000}]},
+{n:"DMC롯데캐슬더퍼스트(수색4)",gu:"은평구",addr:"수색동 (서울리츠2호)",type:"재공급",lat:37.5820,lng:126.8980,units:[{t:"신혼부부",a:49.86,tot:109.97,d:176000,r:626000}]},
+{n:"힐스테이트녹번역(응암1)",gu:"은평구",addr:"응암동 (서울리츠2호)",type:"재공급",lat:37.6010,lng:126.9280,units:[
+  {t:"청년",a:39.12,tot:84.54,d:116520,r:406000,d2:110040,r2:384000},
+  {t:"신혼부부",a:41.50,tot:89.30,d:137430,r:480000}]},
+{n:"DMC SK뷰(수색9)",gu:"은평구",addr:"수색동 (서울리츠2호)",type:"재공급",lat:37.5830,lng:126.8990,units:[{t:"청년",a:38.74,tot:93.27,d:87510,r:320000,d2:82650,r2:303000}]},
+{n:"DMC센트럴자이(증산2)",gu:"은평구",addr:"증산동 (서울리츠2호)",type:"재공급",lat:37.5850,lng:126.9080,units:[{t:"신혼부부",a:39.48,tot:85.58,d:99740,r:365000}]},
+{n:"은뜨락(서울리츠1호)",gu:"은평구",addr:"은평구",type:"재공급",lat:37.6100,lng:126.9290,units:[
+  {t:"청년",a:39.49,tot:84.57,d:97200,r:389000,d2:91800,r2:367000},
+  {t:"신혼부부",a:44.44,tot:95.54,d:121600,r:486000},
+  {t:"고령자",a:39.49,tot:84.57,d:102600,r:410000}]},
+{n:"우디안4단지",gu:"중랑구",addr:"신내동",type:"재공급",lat:37.6130,lng:127.0980,units:[{t:"주거급여수급자",a:21.96,tot:47.63,d:33600,r:140000}]},
+{n:"사가정센트럴아이파크",gu:"중랑구",addr:"면목동",type:"재공급",lat:37.5810,lng:127.0870,units:[{t:"고령자",a:59.78,tot:126.49,d:152760,r:547000}]}
+];
+
+// ── 상태 ──
+const state={class:new Set(["대학생","청년","신혼부부","고령자","주거급여수급자"]),type:new Set(["신규","재공급"]),gu:new Set(),depMax:230000,rentMax:900000,areaMin:0};
+const guList=[...new Set(DATA.map(d=>d.gu))].sort();
+guList.forEach(g=>state.gu.add(g));
+
+// ── 포맷 ──
+function won(cheon){ // 천원 -> "X억 Y만"
+  const man=Math.round(cheon/10); const uk=Math.floor(man/10000); const rem=man-uk*10000;
+  if(uk>0) return rem>0?`${uk}억 ${rem.toLocaleString()}만`:`${uk}억`;
+  return `${man.toLocaleString()}만`;
+}
+function manRent(r){return `${Math.round(r/10000*10)/10}만`;}
+
+// ── 지도 ──
+const map=L.map('map').setView([37.55,127.0],11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+let markers=[];
+function classColor(units){ // 대표 계층 = 첫 유형
+  return COLOR[units[0].t]||'#1a3a6b';
+}
+function unitPassesPrice(u){
+  return u.d<=state.depMax && u.r<=state.rentMax && u.a>=state.areaMin && state.class.has(u.t);
+}
+function complexVisible(c){
+  if(!state.type.has(c.type)) return false;
+  if(!state.gu.has(c.gu)) return false;
+  return c.units.some(unitPassesPrice);
+}
+function unitHtml(u){
+  const col=COLOR[u.t]||'#888';
+  let price=`보증금 ${won(u.d)} / 월 ${manRent(u.r)}원`;
+  if(u.d2) price+=`<br><span style="color:#999">(소득없음: ${won(u.d2)} / 월 ${manRent(u.r2)}원)</span>`;
+  return `<div class="pop-unit"><span class="pop-tag" style="background:${col}">${u.t}</span>전용 ${u.a}㎡ · 계약 ${u.tot}㎡<br>${price}</div>`;
+}
+function render(){
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  let cCount=0,uCount=0;
+  DATA.forEach(c=>{
+    if(!complexVisible(c)) return;
+    cCount++;
+    const shown=c.units.filter(unitPassesPrice); uCount+=shown.length;
+    const col=classColor(shown);
+    const mk=L.circleMarker([c.lat,c.lng],{radius:8,fillColor:col,color:'#fff',weight:2,fillOpacity:.9});
+    const tag=`<span class="pop-tag" style="background:${c.type==='신규'?'#1a3a6b':'#888'}">${c.type}</span>`;
+    mk.bindPopup(`<div class="pop-name">${c.n}</div><div class="pop-addr">${tag}${c.gu} · ${c.addr}</div>${shown.map(unitHtml).join('')}`);
+    mk.addTo(map); markers.push(mk);
+  });
+  document.getElementById('cCount').textContent=cCount;
+  document.getElementById('cUnits').textContent=uCount;
+  renderList();
+}
+function renderList(){
+  const rows=[];
+  DATA.forEach(c=>{
+    if(!complexVisible(c)) return;
+    c.units.filter(unitPassesPrice).forEach(u=>{
+      const col=COLOR[u.t]||'#888';
+      let price=`${won(u.d)} / ${manRent(u.r)}만`;
+      rows.push(`<tr><td>${c.n}<br><span style="color:#999;font-size:11px">${c.gu} ${c.addr}</span></td>
+        <td><span class="pop-tag" style="background:${col}">${u.t}</span></td>
+        <td>${u.a}㎡<br><span style="color:#999;font-size:11px">계약 ${u.tot}㎡</span></td>
+        <td>보증금 ${won(u.d)}<br>월 ${manRent(u.r)}만원</td>
+        <td>${c.type}</td></tr>`);
+    });
+  });
+  document.getElementById('listView').innerHTML=
+    `<table><thead><tr><th>단지명</th><th>계층</th><th>면적</th><th>보증금/월세</th><th>구분</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+// ── 필터 UI ──
+guList.forEach(g=>{
+  const el=document.createElement('span'); el.className='chip gu active'; el.dataset.k=g; el.textContent=g;
+  el.onclick=()=>{el.classList.toggle('active'); el.classList.contains('active')?state.gu.add(g):state.gu.delete(g); render();};
+  document.getElementById('fGu').appendChild(el);
+});
+document.querySelectorAll('#fClass .chip').forEach(el=>el.onclick=()=>{
+  el.classList.toggle('active'); const k=el.dataset.k;
+  el.classList.contains('active')?state.class.add(k):state.class.delete(k); render();
+});
+document.querySelectorAll('#fType .chip').forEach(el=>el.onclick=()=>{
+  el.classList.toggle('active'); const k=el.dataset.k;
+  el.classList.contains('active')?state.type.add(k):state.type.delete(k); render();
+});
+depMax.oninput=e=>{state.depMax=+e.target.value; depLbl.textContent=won(+e.target.value).replace('만','만원'); render();};
+rentMax.oninput=e=>{state.rentMax=+e.target.value; rentLbl.textContent=manRent(+e.target.value)+'원'; render();};
+areaMin.oninput=e=>{state.areaMin=+e.target.value; areaLbl.textContent=e.target.value+'㎡'; render();};
+document.getElementById('reset').onclick=()=>{ location.reload(); };
+// 초기 라벨
+depLbl.textContent='2.3억+'; rentLbl.textContent='90만원';
+
+// ── 탭 ──
+tabMap.onclick=()=>{tabMap.classList.add('on');tabList.classList.remove('on');document.getElementById('map').style.display='';document.getElementById('listView').style.display='none';setTimeout(()=>map.invalidateSize(),50);};
+tabList.onclick=()=>{tabList.classList.add('on');tabMap.classList.remove('on');document.getElementById('map').style.display='none';document.getElementById('listView').style.display='block';};
+
+render();
+</script>
+</body>
+</html>
