@@ -56,7 +56,7 @@
 <body>
 <header>
   <h1>🏠 SH 2026년 2차 행복주택 · 신청 가능 단지 지도</h1>
-  <p>인터넷 청약 2026.9.9~9.11 · 총 62개 단지 (신규 2 · 재공급 60) · <b>단지 마커 클릭 → 가격·평면도·단지정보(전자팸플릿) 바로 확인</b></p>
+  <p>인터넷 청약 2026.9.9~9.11 · 총 62개 단지 · <b>마커 클릭 → 가격 + 전자팸플릿 평면도·단지정보 바로 확인</b> (59개 단지 팸플릿 발췌 제공)</p>
 </header>
 <div id="wrap">
   <aside id="sidebar">
@@ -107,7 +107,7 @@
     </div>
     <div id="map"></div>
     <div id="listView"></div>
-    <div class="note">⚠️ 지도 위치는 단지명·자치구·법정동 기준의 <b>근사 좌표</b>입니다(공고문 13번 단지별 주소표 미포함분). <b>📄전자팸플릿</b>은 SH 인터넷청약시스템 원본 PDF(평면도·단지배치·동호·조감도 등)를 그대로 붙인 것으로, '※동일단지 추정' 표시는 이름·차수가 달라 같은 건물로 추정한 경우입니다. 팸플릿이 없는 단지(대부분 매입형 기존 아파트)는 📐평면도 이미지검색을 제공합니다. 보증금·월세는 단지 대표금액이며 층·향에 따라 다를 수 있고, 청년 유형은 소득유무에 따라 금액이 다릅니다(높은 쪽=소득있음).</div>
+    <div class="note">⚠️ 지도 위치는 단지명·자치구·법정동 기준의 <b>근사 좌표</b>입니다(공고문 13번 주소표 미포함분). <b>평면도 이미지</b>는 SH 전자팸플릿(과거 공고 포함, 통합 카탈로그의 경우 해당 단지 섹션)에서 자동 발췌한 것으로 조감도·배치도 등 인접 페이지가 함께 포함될 수 있습니다 — 정확한 원본은 각 팝업의 <b>‘SH 원본 팸플릿 전체’</b> 링크에서 확인하세요. '※추정'은 이름·차수가 달라 동일 단지로 추정한 경우입니다. 팸플릿이 없는 3개 단지(고덕온빛채·방화스카이포레·우디안4단지)는 📐이미지검색을 제공합니다. 보증금·월세는 대표금액이며 층·향에 따라 다를 수 있고, 청년 유형은 소득유무로 금액이 다릅니다(높은 쪽=소득있음).</div>
   </div>
 </div>
 <div id="pdfModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6)">
@@ -117,7 +117,7 @@
       <span style="white-space:nowrap"><a id="pdfOpen" href="#" target="_blank" rel="noopener" style="color:#cfe0ff;font-size:12px;margin-right:14px;text-decoration:none">↗ 새 탭</a><button onclick="closePdf()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1">✕</button></span>
     </div>
     <div id="pdfInfo" style="padding:7px 12px;background:#f4f6fb;font-size:12px;line-height:1.55;max-height:110px;overflow:auto;border-bottom:1px solid #e0e4ec"></div>
-    <iframe id="pdfFrame" title="전자팸플릿" style="flex:1;border:0;width:100%"></iframe>
+    <div id="pdfImgs" style="flex:1;overflow:auto;background:#e9edf3;padding:10px"></div>
     <div id="pdfFallback" style="display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;color:#555;gap:12px;padding:24px;text-align:center;font-size:14px"></div>
   </div>
 </div>
@@ -126,38 +126,32 @@
 // 계층 색상
 const COLOR={대학생:'#e07a5f',청년:'#3d7ea6',신혼부부:'#5b8c5a',고령자:'#9b59b6',주거급여수급자:'#c0392b'};
 // SH 전자팸플릿 매핑 (단지명: [seq, 동일단지추정여부]) — 평면도·단지정보 원본 PDF
-const PAMPH={
- "두산위브더프레스티지":["309297",0],"창경궁롯데캐슬시그니처(삼선5)":["309298",0],
- "e편한세상 서울대입구2차(봉천12-1)":["216152",0],"아크로리버하임(흑석7)":["261101",0],
- "학수복합(학수)":["261088",0],"공덕SK리더스뷰_2단지":["215820",0],
- "북한산두산위브(홍은14)":["211671",0],"DMC에코자이(가재울6)":["211675",0],
- "왕십리자이(하왕1-5)":["261091",0],"서울숲리버뷰자이(행당6)":["261097",0],
- "금호파크힐스이편한세상(금호15)":["261100",0],"래미안아트리치(석관2)":["261104",0],
- "장위자이레디언트(장위4)":["282722",0],"보라매 SK뷰(신길5)":["216155",0],
- "래미안베라힐즈(녹번1-2)":["261086",0],"백련산해모로(응암11)":["216154",0],
- "DMC롯데캐슬더퍼스트(수색4)":["216151",0],"DMC센트럴자이(증산2)":["244365",0],
- "DMC SK뷰(수색9)":["244364",0],"노원센트럴푸르지오(상계4)":["211673",0],
- "은뜨락(서울리츠1호)":["256702",0],"가양동 1457-1 모듈러 행복주택":["181100",0],
- "보라매자이":["239024",0],"푸르내(서울리츠1호)":["256705",1],
- "상도 청석채":["216160",1],"보문파크뷰자이(보문3)":["182671",1],
- "꿈의숲코오롱하늘채(장위2)":["185054",1],"용산데시앙포레(효창6)":["240172",1]
-};
-function _setPdf(seq){const f=document.getElementById('pdfFrame'),fb=document.getElementById('pdfFallback'),o=document.getElementById('pdfOpen');const u='pamphlets/'+seq+'.pdf';f.src=u;f.style.display='';fb.style.display='none';o.href=u;o.style.display='';}
-function _setFallback(html){const f=document.getElementById('pdfFrame'),fb=document.getElementById('pdfFallback'),o=document.getElementById('pdfOpen');f.src='';f.style.display='none';fb.style.display='flex';fb.innerHTML=html;o.style.display='none';}
+const PAMPH={"두산위브더프레스티지":["309297","1",0,["plans/c0_0.jpg","plans/c0_1.jpg","plans/c0_2.jpg","plans/c0_3.jpg"]],"창경궁롯데캐슬시그니처(삼선5)":["309298","1",0,["plans/c1_0.jpg","plans/c1_1.jpg","plans/c1_2.jpg"]],"e편한세상 서울대입구2차(봉천12-1)":["216152","1",0,["plans/c2_0.jpg"]],"아크로리버하임(흑석7)":["261101","1",0,["plans/c3_0.jpg"]],"학수복합(학수)":["261088","1",0,["plans/c4_0.jpg","plans/c4_1.jpg","plans/c4_2.jpg"]],"공덕SK리더스뷰_2단지":["215820","3",0,["plans/c5_0.jpg","plans/c5_1.jpg","plans/c5_2.jpg"]],"북한산두산위브(홍은14)":["211671","1",0,["plans/c6_0.jpg"]],"DMC에코자이(가재울6)":["211675","1",0,["plans/c7_0.jpg"]],"왕십리자이(하왕1-5)":["261091","1",0,["plans/c8_0.jpg","plans/c8_1.jpg"]],"서울숲리버뷰자이(행당6)":["261097","1",0,["plans/c9_0.jpg","plans/c9_1.jpg"]],"금호파크힐스이편한세상(금호15)":["261100","1",0,["plans/c10_0.jpg","plans/c10_1.jpg"]],"래미안아트리치(석관2)":["261104","1",0,["plans/c11_0.jpg","plans/c11_1.jpg"]],"장위자이레디언트(장위4)":["282722","1",0,["plans/c12_0.jpg","plans/c12_1.jpg","plans/c12_2.jpg"]],"보라매 SK뷰(신길5)":["216155","1",0,["plans/c13_0.jpg"]],"래미안베라힐즈(녹번1-2)":["261086","1",0,["plans/c14_0.jpg","plans/c14_1.jpg","plans/c14_2.jpg"]],"백련산해모로(응암11)":["216154","1",0,["plans/c15_0.jpg","plans/c15_1.jpg"]],"DMC롯데캐슬더퍼스트(수색4)":["216151","1",0,["plans/c16_0.jpg"]],"DMC센트럴자이(증산2)":["244365","1",0,["plans/c17_0.jpg","plans/c17_1.jpg","plans/c17_2.jpg"]],"DMC SK뷰(수색9)":["244364","1",0,["plans/c18_0.jpg"]],"노원센트럴푸르지오(상계4)":["211673","1",0,["plans/c19_0.jpg"]],"은뜨락(서울리츠1호)":["256702","1",0,["plans/c20_0.jpg","plans/c20_1.jpg","plans/c20_2.jpg"]],"가양동 1457-1 모듈러 행복주택":["181100","2",0,["plans/c21_0.jpg","plans/c21_1.jpg","plans/c21_2.jpg","plans/c21_3.jpg"]],"보라매자이":["239024","1",0,["plans/c22_0.jpg","plans/c22_1.jpg","plans/c22_2.jpg","plans/c22_3.jpg"]],"푸르내(서울리츠1호)":["256705","1",1,["plans/c23_0.jpg","plans/c23_1.jpg","plans/c23_2.jpg"]],"상도 청석채":["216160","1",1,["plans/c24_0.jpg","plans/c24_1.jpg","plans/c24_2.jpg"]],"보문파크뷰자이(보문3)":["182671","1",1,["plans/c25_0.jpg","plans/c25_1.jpg","plans/c25_2.jpg"]],"꿈의숲코오롱하늘채(장위2)":["185054","1",1,["plans/c26_0.jpg","plans/c26_1.jpg"]],"용산데시앙포레(효창6)":["240172","1",1,["plans/c27_0.jpg"]],"디에이치 아너힐즈":["202683","1",0,["plans/c28_0.jpg","plans/c28_1.jpg","plans/c28_2.jpg","plans/c28_3.jpg"]],"고덕 그라시움":["202683","1",0,["plans/c29_0.jpg","plans/c29_1.jpg","plans/c29_2.jpg","plans/c29_3.jpg"]],"롯데캐슬베네루체":["208810","1",0,["plans/c30_0.jpg","plans/c30_1.jpg","plans/c30_2.jpg"]],"꿈의숲 효성해링턴플레이스":["202683","1",0,["plans/c31_0.jpg","plans/c31_1.jpg","plans/c31_2.jpg","plans/c31_3.jpg"]],"꿈의숲 롯데캐슬(미아4)":["182673","1",0,["plans/c32_0.jpg","plans/c32_1.jpg","plans/c32_2.jpg"]],"e편한세상 염창":["202683","1",1,["plans/c33_0.jpg","plans/c33_1.jpg","plans/c33_2.jpg","plans/c33_3.jpg"]],"e편한세상서울대입구(봉천12-2)":["207726","1",0,["plans/c34_0.jpg"]],"건대프라하임3차":["249616","1",0,["plans/c35_0.jpg","plans/c35_1.jpg","plans/c35_2.jpg","plans/c35_3.jpg"]],"어울채(서울리츠1호)":["275456","2",0,["plans/c36_0.jpg","plans/c36_1.jpg","plans/c36_2.jpg","plans/c36_3.jpg"]],"천왕연지마을 1":["182670","3",0,["plans/c37_0.jpg","plans/c37_1.jpg","plans/c37_2.jpg","plans/c37_3.jpg"]],"천왕연지마을 2":["182670","3",0,["plans/c38_0.jpg","plans/c38_1.jpg","plans/c38_2.jpg","plans/c38_3.jpg"]],"항동 하버라인 지구":["191854","1",0,["plans/c39_0.jpg","plans/c39_1.jpg","plans/c39_2.jpg","plans/c39_3.jpg"]],"숲에리움(오류1동 청신호)":["217510","2",0,["plans/c40_0.jpg","plans/c40_1.jpg","plans/c40_2.jpg","plans/c40_3.jpg"]],"e편한세상 청계센트럴포레(용두5)":["234861","1",0,["plans/c41_0.jpg"]],"공덕동 크로시티":["256854","1",0,["plans/c42_0.jpg","plans/c42_1.jpg","plans/c42_2.jpg","plans/c42_3.jpg"]],"마포자이더센트리지(염리2)":["256706","1",0,["plans/c43_0.jpg"]],"서초선포레":["166099","1",0,["plans/c44_0.jpg","plans/c44_1.jpg","plans/c44_2.jpg","plans/c44_3.jpg"]],"반포센트럴자이":["217511","1",0,["plans/c45_0.jpg","plans/c45_1.jpg","plans/c45_2.jpg","plans/c45_3.jpg"]],"정릉 하늘마루":["208809","1",0,["plans/c46_0.jpg","plans/c46_1.jpg","plans/c46_2.jpg"]],"래미안장위퍼스트하이(장위5)":["207726","1",0,["plans/c47_0.jpg","plans/c47_1.jpg","plans/c47_2.jpg","plans/c47_3.jpg"]],"꿈의숲아이파크(장위7)":["221026","2",0,["plans/c48_0.jpg"]],"송파파크데일 3":["176885","1",0,["plans/c49_0.jpg","plans/c49_1.jpg","plans/c49_2.jpg"]],"잠실올림픽공원아이파크":["208810","1",0,["plans/c50_0.jpg","plans/c50_1.jpg","plans/c50_2.jpg","plans/c50_3.jpg"]],"e편한세상 보라매2차":["208810","1",0,["plans/c51_0.jpg","plans/c51_1.jpg"]],"백련산SK VIEW IPARK(응암10)":["207726","1",0,["plans/c52_0.jpg","plans/c52_1.jpg","plans/c52_2.jpg","plans/c52_3.jpg"]],"힐스테이트녹번역(응암1)":["234863","1",0,["plans/c53_0.jpg"]],"사가정센트럴아이파크":["208810","1",0,["plans/c54_0.jpg","plans/c54_1.jpg","plans/c54_2.jpg"]],"강동리엔파크11단지":["217510","2",0,["plans/c55_0.jpg","plans/c55_1.jpg","plans/c55_2.jpg","plans/c55_3.jpg"]],"강동리엔파크14단지":["217510","2",0,["plans/c56_0.jpg","plans/c56_1.jpg","plans/c56_2.jpg","plans/c56_3.jpg"]],"천왕이펜하우스8단지":["191854","1",0,["plans/c57_0.jpg","plans/c57_1.jpg","plans/c57_2.jpg","plans/c57_3.jpg"]],"마포그랑자이(대흥2)":["216157","1",0,["plans/c58_0.jpg"]]};
 function _fmtUnits(c){
-  const shown=c.units.filter(unitPassesPrice); const src=shown.length?shown:c.units;
-  return src.map(u=>{const col=COLOR[u.t]||'#888';let p=`보증금 ${won(u.d)} / 월 ${manRent(u.r)}만원`;if(u.d2)p+=` <span style="color:#999">(소득없음 ${won(u.d2)}/${manRent(u.r2)}만)</span>`;return `<span class="pop-tag" style="background:${col}">${u.t}</span> 전용 ${u.a}㎡ · ${p}`;}).join('<br>');
+  var shown=c.units.filter(unitPassesPrice); var src=shown.length?shown:c.units;
+  return src.map(function(u){var col=COLOR[u.t]||"#888";var p="보증금 "+won(u.d)+" / 월 "+manRent(u.r)+"만원";if(u.d2)p+=" <span style=\"color:#999\">(소득없음 "+won(u.d2)+"/"+manRent(u.r2)+"만)</span>";return "<span class=\"pop-tag\" style=\"background:"+col+"\">"+u.t+"</span> 전용 "+u.a+"㎡ · "+p;}).join("<br>");
 }
-function openPdf(seq,title){document.getElementById('pdfTitle').textContent=title+' · SH 전자팸플릿';const info=document.getElementById('pdfInfo');info.style.display='none';info.innerHTML='';_setPdf(seq);document.getElementById('pdfModal').style.display='block';}
 function openComplex(c){
-  document.getElementById('pdfTitle').textContent=c.n+' · '+c.gu+' '+c.addr;
-  const info=document.getElementById('pdfInfo');info.style.display='';info.innerHTML=_fmtUnits(c);
-  const pv=PAMPH[c.n];
-  if(pv){ _setPdf(pv[0]); if(pv[1]) info.innerHTML+='<br><span style="color:#c0392b;font-size:11px">※ 이름·차수가 달라 동일 단지로 추정한 팸플릿입니다</span>'; }
-  else{ const q=encodeURIComponent(c.n.replace(/\(.*?\)/g,'').trim()+' 평면도'); _setFallback(`이 단지는 SH 전자팸플릿이 없습니다 <span style="color:#999">(대부분 매입형 기존 아파트)</span><br><a href="https://search.naver.com/search.naver?where=image&query=${q}" target="_blank" rel="noopener" style="color:#03c75a;font-weight:700;font-size:15px;text-decoration:none">📐 평면도 이미지 검색 열기</a>`); }
-  document.getElementById('pdfModal').style.display='block';
+  document.getElementById("pdfTitle").textContent=c.n+" · "+c.gu+" "+c.addr;
+  var info=document.getElementById("pdfInfo");info.style.display="";info.innerHTML=_fmtUnits(c);
+  var pv=PAMPH[c.n], imgsEl=document.getElementById("pdfImgs"), fb=document.getElementById("pdfFallback"), o=document.getElementById("pdfOpen");
+  if(pv){
+    imgsEl.style.display="block"; fb.style.display="none";
+    imgsEl.innerHTML="<div style=\"color:#555;font-size:12px;margin-bottom:8px\">📐 전자팸플릿에서 뽑은 <b>평면도·단지정보 발췌</b> · 원본 전체는 우측 상단 링크</div>"+pv[3].map(function(u){return "<img src=\""+u+"\" loading=\"lazy\" style=\"width:100%;display:block;margin-bottom:8px;border:1px solid #d5d9e0;border-radius:4px;background:#fff\">";}).join("");
+    if(pv[2]) info.innerHTML+="<br><span style=\"color:#c0392b;font-size:11px\">※ 이름·차수가 달라 동일 단지로 추정한 팸플릿입니다</span>";
+    o.href="https://www.i-sh.co.kr/app/com/file/innoFD.do?brdId=JI1901&seq="+pv[0]+"&fileTp=&fileSeq="+pv[1];
+    o.textContent="📄 SH 원본 팸플릿 전체"; o.style.display="";
+  }else{
+    imgsEl.style.display="none"; imgsEl.innerHTML="";
+    var q=encodeURIComponent(c.n.replace(/\(.*?\)/g,"").trim()+" 평면도");
+    fb.style.display="flex"; fb.innerHTML="이 단지는 SH 전자팸플릿이 없습니다 <span style=\"color:#999\">(대부분 매입형 기존 아파트)</span><br><a href=\"https://search.naver.com/search.naver?where=image&query="+q+"\" target=\"_blank\" rel=\"noopener\" style=\"color:#03c75a;font-weight:700;font-size:15px;text-decoration:none\">📐 평면도 이미지 검색 열기</a>";
+    o.style.display="none";
+  }
+  document.getElementById("pdfModal").style.display="block";
 }
-function closePdf(){document.getElementById('pdfModal').style.display='none';document.getElementById('pdfFrame').src='';}
+function openByName(n){var c=DATA.find(function(x){return x.n===n;}); if(c) openComplex(c);}
+function closePdf(){document.getElementById("pdfModal").style.display="none";document.getElementById("pdfImgs").innerHTML="";}
+
 // 데이터: t=계층, a=전용면적, tot=계약면적합계, d=보증금(천원,소득있음/기본), r=월세(원), d2/r2=소득없음(청년)
 const DATA=[
 // ── 신규 공급 ──
@@ -338,7 +332,7 @@ function renderList(){
       const q=encodeURIComponent(c.n.replace(/\(.*?\)/g,'').trim()+' 평면도');
       const pv=PAMPH[c.n];
       const planCell=pv
-        ? `<a href="javascript:void(0)" onclick="openPdf('${pv[0]}','${c.n.replace(/'/g,'')}')" style="color:#1a3a6b;font-weight:700;text-decoration:none">📄 팸플릿</a>${pv[1]?'<br><span style="color:#c0392b;font-size:10px">추정</span>':''}`
+        ? `<a href="javascript:void(0)" onclick="openByName(${JSON.stringify(c.n)})" style="color:#1a3a6b;font-weight:700;text-decoration:none">📄 평면도</a>${pv[2]?'<br><span style="color:#c0392b;font-size:10px">추정</span>':''}`
         : `<a href="https://search.naver.com/search.naver?where=image&query=${q}" target="_blank" rel="noopener" style="color:#03c75a;font-weight:700;text-decoration:none">📐 검색</a>`;
       rows.push(`<tr><td>${c.n}<br><span style="color:#999;font-size:11px">${c.gu} ${c.addr}</span></td>
         <td><span class="pop-tag" style="background:${col}">${u.t}</span></td>
