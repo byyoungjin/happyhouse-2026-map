@@ -95,7 +95,7 @@
       <h3>가격 범위</h3>
       <div class="rangerow">
         <label>임대보증금 최대: <b id="depLbl">3.0억</b></label>
-        <input type="range" id="depMax" min="0" max="230000" step="5000" value="230000">
+        <input type="range" id="depMax" min="0" max="1200000" step="10000" value="1200000">
       </div>
       <div class="rangerow">
         <label>월임대료 최대: <b id="rentLbl">90만원</b></label>
@@ -137,13 +137,22 @@ const COLOR={대학생:'#e07a5f',청년:'#3d7ea6',신혼부부:'#5b8c5a',고령�
 const PAMPH={"두산위브더프레스티지":["309297","1",0,["plans/c0_0.jpg","plans/c0_1.jpg","plans/c0_2.jpg","plans/c0_3.jpg"]],"창경궁롯데캐슬시그니처(삼선5)":["309298","1",0,["plans/c1_0.jpg","plans/c1_1.jpg","plans/c1_2.jpg"]],"e편한세상 서울대입구2차(봉천12-1)":["216152","1",0,["plans/c2_0.jpg"]],"아크로리버하임(흑석7)":["261101","1",0,["plans/c3_0.jpg"]],"학수복합(학수)":["261088","1",0,["plans/c4_0.jpg","plans/c4_1.jpg","plans/c4_2.jpg"]],"공덕SK리더스뷰_2단지":["215820","3",0,["plans/c5_0.jpg","plans/c5_1.jpg","plans/c5_2.jpg"]],"북한산두산위브(홍은14)":["211671","1",0,["plans/c6_0.jpg"]],"DMC에코자이(가재울6)":["211675","1",0,["plans/c7_0.jpg"]],"왕십리자이(하왕1-5)":["261091","1",0,["plans/c8_0.jpg","plans/c8_1.jpg"]],"서울숲리버뷰자이(행당6)":["261097","1",0,["plans/c9_0.jpg","plans/c9_1.jpg"]],"금호파크힐스이편한세상(금호15)":["261100","1",0,["plans/c10_0.jpg","plans/c10_1.jpg"]],"래미안아트리치(석관2)":["261104","1",0,["plans/c11_0.jpg","plans/c11_1.jpg"]],"장위자이레디언트(장위4)":["282722","1",0,["plans/c12_0.jpg","plans/c12_1.jpg","plans/c12_2.jpg"]],"보라매 SK뷰(신길5)":["216155","1",0,["plans/c13_0.jpg"]],"래미안베라힐즈(녹번1-2)":["261086","1",0,["plans/c14_0.jpg","plans/c14_1.jpg","plans/c14_2.jpg"]],"백련산해모로(응암11)":["216154","1",0,["plans/c15_0.jpg","plans/c15_1.jpg"]],"DMC롯데캐슬더퍼스트(수색4)":["216151","1",0,["plans/c16_0.jpg"]],"DMC센트럴자이(증산2)":["244365","1",0,["plans/c17_0.jpg","plans/c17_1.jpg","plans/c17_2.jpg"]],"DMC SK뷰(수색9)":["244364","1",0,["plans/c18_0.jpg"]],"노원센트럴푸르지오(상계4)":["211673","1",0,["plans/c19_0.jpg"]],"은뜨락(서울리츠1호)":["256702","1",0,["plans/c20_0.jpg","plans/c20_1.jpg","plans/c20_2.jpg"]],"가양동 1457-1 모듈러 행복주택":["181100","2",0,["plans/c21_0.jpg","plans/c21_1.jpg","plans/c21_2.jpg","plans/c21_3.jpg"]],"보라매자이":["239024","1",0,["plans/c22_0.jpg","plans/c22_1.jpg","plans/c22_2.jpg","plans/c22_3.jpg"]],"푸르내(서울리츠1호)":["256705","1",1,["plans/c23_0.jpg","plans/c23_1.jpg","plans/c23_2.jpg"]],"상도 청석채":["216160","1",1,["plans/c24_0.jpg","plans/c24_1.jpg","plans/c24_2.jpg"]],"보문파크뷰자이(보문3)":["182671","1",1,["plans/c25_0.jpg","plans/c25_1.jpg","plans/c25_2.jpg"]],"꿈의숲코오롱하늘채(장위2)":["185054","1",1,["plans/c26_0.jpg","plans/c26_1.jpg"]],"용산데시앙포레(효창6)":["240172","1",1,["plans/c27_0.jpg"]],"디에이치 아너힐즈":["202683","1",0,["plans/c28_0.jpg","plans/c28_1.jpg","plans/c28_2.jpg","plans/c28_3.jpg"]],"고덕 그라시움":["202683","1",0,["plans/c29_0.jpg","plans/c29_1.jpg","plans/c29_2.jpg","plans/c29_3.jpg"]],"롯데캐슬베네루체":["208810","1",0,["plans/c30_0.jpg","plans/c30_1.jpg","plans/c30_2.jpg"]],"꿈의숲 효성해링턴플레이스":["202683","1",0,["plans/c31_0.jpg","plans/c31_1.jpg","plans/c31_2.jpg","plans/c31_3.jpg"]],"꿈의숲 롯데캐슬(미아4)":["182673","1",0,["plans/c32_0.jpg","plans/c32_1.jpg","plans/c32_2.jpg"]],"e편한세상 염창":["202683","1",1,["plans/c33_0.jpg","plans/c33_1.jpg","plans/c33_2.jpg","plans/c33_3.jpg"]],"e편한세상서울대입구(봉천12-2)":["207726","1",0,["plans/c34_0.jpg"]],"건대프라하임3차":["249616","1",0,["plans/c35_0.jpg","plans/c35_1.jpg","plans/c35_2.jpg","plans/c35_3.jpg"]],"어울채(서울리츠1호)":["275456","2",0,["plans/c36_0.jpg","plans/c36_1.jpg","plans/c36_2.jpg","plans/c36_3.jpg"]],"천왕연지마을 1":["182670","3",0,["plans/c37_0.jpg","plans/c37_1.jpg","plans/c37_2.jpg","plans/c37_3.jpg"]],"천왕연지마을 2":["182670","3",0,["plans/c38_0.jpg","plans/c38_1.jpg","plans/c38_2.jpg","plans/c38_3.jpg"]],"항동 하버라인 지구":["191854","1",0,["plans/c39_0.jpg","plans/c39_1.jpg","plans/c39_2.jpg","plans/c39_3.jpg"]],"숲에리움(오류1동 청신호)":["217510","2",0,["plans/c40_0.jpg","plans/c40_1.jpg","plans/c40_2.jpg","plans/c40_3.jpg"]],"e편한세상 청계센트럴포레(용두5)":["234861","1",0,["plans/c41_0.jpg"]],"공덕동 크로시티":["256854","1",0,["plans/c42_0.jpg","plans/c42_1.jpg","plans/c42_2.jpg","plans/c42_3.jpg"]],"마포자이더센트리지(염리2)":["256706","1",0,["plans/c43_0.jpg"]],"서초선포레":["166099","1",0,["plans/c44_0.jpg","plans/c44_1.jpg","plans/c44_2.jpg","plans/c44_3.jpg"]],"반포센트럴자이":["217511","1",0,["plans/c45_0.jpg","plans/c45_1.jpg","plans/c45_2.jpg","plans/c45_3.jpg"]],"정릉 하늘마루":["208809","1",0,["plans/c46_0.jpg","plans/c46_1.jpg","plans/c46_2.jpg"]],"래미안장위퍼스트하이(장위5)":["207726","1",0,["plans/c47_0.jpg","plans/c47_1.jpg","plans/c47_2.jpg","plans/c47_3.jpg"]],"꿈의숲아이파크(장위7)":["221026","2",0,["plans/c48_0.jpg"]],"송파파크데일 3":["176885","1",0,["plans/c49_0.jpg","plans/c49_1.jpg","plans/c49_2.jpg"]],"잠실올림픽공원아이파크":["208810","1",0,["plans/c50_0.jpg","plans/c50_1.jpg","plans/c50_2.jpg","plans/c50_3.jpg"]],"e편한세상 보라매2차":["208810","1",0,["plans/c51_0.jpg","plans/c51_1.jpg"]],"백련산SK VIEW IPARK(응암10)":["207726","1",0,["plans/c52_0.jpg","plans/c52_1.jpg","plans/c52_2.jpg","plans/c52_3.jpg"]],"힐스테이트녹번역(응암1)":["234863","1",0,["plans/c53_0.jpg"]],"사가정센트럴아이파크":["208810","1",0,["plans/c54_0.jpg","plans/c54_1.jpg","plans/c54_2.jpg"]],"강동리엔파크11단지":["217510","2",0,["plans/c55_0.jpg","plans/c55_1.jpg","plans/c55_2.jpg","plans/c55_3.jpg"]],"강동리엔파크14단지":["217510","2",0,["plans/c56_0.jpg","plans/c56_1.jpg","plans/c56_2.jpg","plans/c56_3.jpg"]],"천왕이펜하우스8단지":["191854","1",0,["plans/c57_0.jpg","plans/c57_1.jpg","plans/c57_2.jpg","plans/c57_3.jpg"]],"마포그랑자이(대흥2)":["216157","1",0,["plans/c58_0.jpg"]],"래미안레벤투스":["309147","1",0,["plans/j0_0.jpg","plans/j0_1.jpg","plans/j0_2.jpg"]],"청담르엘":["292356","1",0,["plans/j1_0.jpg","plans/j1_1.jpg","plans/j1_2.jpg"]],"두산위브더프레스티지(장기전세)":["309148","1",0,["plans/j2_0.jpg","plans/j2_1.jpg","plans/j2_2.jpg"]],"이문3 복합공공청사":["309152","1",0,["plans/j3_0.jpg","plans/j3_1.jpg","plans/j3_2.jpg"]],"디에이치방배":["309149","1",0,["plans/j4_0.jpg","plans/j4_1.jpg","plans/j4_2.jpg"]],"오티에르반포":["309153","1",0,["plans/j5_0.jpg","plans/j5_1.jpg","plans/j5_2.jpg"]],"성동자이리버뷰":["309150","1",0,["plans/j6_0.jpg","plans/j6_1.jpg","plans/j6_2.jpg"]],"어반하임102":["304904","1",0,["plans/j8_0.jpg","plans/j8_1.jpg","plans/j8_2.jpg"]]};
 function _fmtUnits(c){
   var shown=c.units.filter(unitPassesPrice); var src=shown.length?shown:c.units;
-  return src.map(function(u){var col=COLOR[u.t]||"#888";var area=u.al?u.al:(u.a+"㎡");var p;if(u.t==="장기전세"){p="<b style=\"color:#e67e22\">전세보증금 별도</b> (팸플릿·공고문 참조)";}else{p="보증금 "+won(u.d)+" / 월 "+manRent(u.r)+"만원";if(u.d2)p+=" <span style=\"color:#999\">(소득없음 "+won(u.d2)+"/"+manRent(u.r2)+"만)</span>";}return "<span class=\"pop-tag\" style=\"background:"+col+"\">"+u.t+"</span> 전용 "+area+" · <b>"+(u.q||0)+"호</b> · "+p;}).join("<br>");
+  return src.map(function(u){var col=COLOR[u.t]||"#888";var area=u.al?u.al:(u.a+"㎡");var p;if(u.t==="장기전세"){p="<b style=\"color:#e67e22\">전세보증금 "+won(u.d)+"</b>";}else{p="보증금 "+won(u.d)+" / 월 "+manRent(u.r)+"만원";if(u.d2)p+=" <span style=\"color:#999\">(소득없음 "+won(u.d2)+"/"+manRent(u.r2)+"만)</span>";}return "<span class=\"pop-tag\" style=\"background:"+col+"\">"+u.t+"</span> 전용 "+area+" · <b>"+(u.q||0)+"호</b> · "+p;}).join("<br>");
+}
+
+function nearestStation(c){
+  var best=null;
+  for(var line in SUB){ var arr=SUB[line];
+    for(var i=0;i<arr.length;i++){ var d=_hav([c.lat,c.lng],[arr[i][0],arr[i][1]])*1000;
+      if(!best||d<best.d){ best={d:d,name:arr[i][2],line:line}; } } }
+  if(!best) return {name:"-",line:"",dist:0,min:0};
+  return {name:best.name,line:best.line,dist:Math.round(best.d/10)*10,min:Math.max(1,Math.round(best.d/67))};
 }
 function openComplex(c){
   document.getElementById("pdfTitle").textContent=c.n+" · "+c.gu+" "+c.addr;
   var info=document.getElementById("pdfInfo");info.style.display="";
   var nlabel=c.notice==="51차 장기전세"?"제51차 장기전세":"2026년 2차 행복주택";
-  info.innerHTML='<div style="font-weight:700;color:#1a3a6b;margin-bottom:3px">📋 공급 '+c.total+'호 · 입주예정 '+c.mv+' · 공고: '+nlabel+'</div>'+_fmtUnits(c);
+  info.innerHTML='<div style="font-weight:700;color:#1a3a6b;margin-bottom:3px">📋 공급 '+c.total+'호 · 입주예정 '+c.mv+' · 공고: '+nlabel+'</div>'+_fmtUnits(c);var _st=nearestStation(c);info.innerHTML+='<div style="margin-top:5px;border-top:1px dashed #ccd;padding-top:5px">🚇 가까운 역 <b>'+_st.name+'</b> <span style="color:#888">('+_st.line+')</span> · 약 '+_st.dist+'m·도보 '+_st.min+'분  ·  <a href="https://map.kakao.com/link/roadview/'+c.lat+','+c.lng+'" target="_blank" rel="noopener" style="color:#e67e22;font-weight:700;text-decoration:none">🛣️ 거리뷰</a> · <a href="https://map.naver.com/p/search/'+encodeURIComponent(c.n+" "+c.addr)+'" target="_blank" rel="noopener" style="color:#03c75a;font-weight:700;text-decoration:none">🗺️ 지도·주변</a> · <a href="https://map.kakao.com/link/map/'+encodeURIComponent(c.n)+','+c.lat+','+c.lng+'" target="_blank" rel="noopener" style="color:#1a3a6b;font-weight:700;text-decoration:none">📍 카카오맵</a></div>';
   var pv=PAMPH[c.n], imgsEl=document.getElementById("pdfImgs"), fb=document.getElementById("pdfFallback"), o=document.getElementById("pdfOpen");
   if(pv){
     imgsEl.style.display="block"; fb.style.display="none";
@@ -261,20 +270,20 @@ const DATA=[
   {t:"신혼부부",a:44.44,tot:95.54,d:121600,r:486000},
   {t:"고령자",a:39.49,tot:84.57,d:102600,r:410000}]},
 {n:"우디안4단지",gu:"중랑구",addr:"신내동",type:"재공급",lat:37.6130,lng:127.0980,units:[{t:"주거급여수급자",a:21.96,tot:47.63,d:33600,r:140000}]},
-{n:"사가정센트럴아이파크",gu:"중랑구",addr:"면목동",type:"재공급",lat:37.5810,lng:127.0870,units:[{t:"고령자",a:59.78,tot:126.49,d:152760,r:547000}]},
-{n:"래미안레벤투스",gu:"강남구",addr:"도곡동",type:"신규",lat:37.4879,lng:127.0448,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:45,tot:0,d:0,r:0,al:"45·58㎡"}]},
-{n:"청담르엘",gu:"강남구",addr:"청담동",type:"신규",lat:37.5195,lng:127.049,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:59,tot:0,d:0,r:0,al:"59㎡"}]},
-{n:"두산위브더프레스티지(장기전세)",gu:"구로구",addr:"개봉동 199-4",type:"신규",lat:37.4954,lng:126.858,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:45,tot:0,d:0,r:0,al:"45·59㎡"}]},
-{n:"이문3 복합공공청사",gu:"동대문구",addr:"이문동",type:"신규",lat:37.596,lng:127.066,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:43,tot:0,d:0,r:0,al:"43㎡"}]},
-{n:"디에이치방배",gu:"서초구",addr:"방배동",type:"신규",lat:37.487,lng:126.993,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:59,tot:0,d:0,r:0,al:"59㎡"}]},
-{n:"오티에르반포",gu:"서초구",addr:"반포동",type:"신규",lat:37.503,lng:127.006,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:44,tot:0,d:0,r:0,al:"44·59㎡"}]},
-{n:"성동자이리버뷰",gu:"성동구",addr:"성동구",type:"신규",lat:37.556,lng:127.036,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:59,tot:0,d:0,r:0,al:"59㎡"}]},
-{n:"영등포자이 디그니티",gu:"영등포구",addr:"영등포동",type:"신규",lat:37.5185,lng:126.907,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:59,tot:0,d:0,r:0,al:"59㎡"}]},
-{n:"어반하임102",gu:"중랑구",addr:"중화동",type:"신규",lat:37.606,lng:127.093,notice:"51차 장기전세",mv:"준공시별(2027~)",units:[{t:"장기전세",a:45,tot:0,d:0,r:0,al:"45㎡"}]}
+{n:"사가정센트럴아이파크",gu:"중랑구",addr:"면목동",type:"재공급",lat:37.5810,lng:127.0870,units:[{t:"고령자",a:59.78,tot:126.49,d:152760,r:547000}]},,
+{n:"래미안레벤투스",gu:"강남구",addr:"도곡동 (도곡로 242)",type:"신규",lat:37.487,lng:127.048,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:45.98,tot:0,d:717600,r:0,q:14,al:"45㎡"},{t:"장기전세",a:58.78,tot:0,d:889200,r:0,q:10,al:"58㎡"}]},
+{n:"청담르엘",gu:"강남구",addr:"청담동 (학동로 607)",type:"신규",lat:37.519,lng:127.053,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:59.78,tot:0,d:1170000,r:0,q:57,al:"59㎡"}]},
+{n:"두산위브더프레스티지(장기전세)",gu:"구로구",addr:"개봉동 (남부순환로97길 26-2)",type:"신규",lat:37.493,lng:126.854,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:45.67,tot:0,d:322140,r:0,q:7,al:"45㎡"},{t:"장기전세",a:59.73,tot:0,d:442260,r:0,q:2,al:"59㎡"}]},
+{n:"이문3 복합공공청사",gu:"동대문구",addr:"이문동 (휘경로5길 10-3)",type:"신규",lat:37.5905,lng:127.062,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:43.9,tot:0,d:295620,r:0,q:2,al:"43㎡"}]},
+{n:"디에이치방배",gu:"서초구",addr:"방배동 (서초대로 50)",type:"신규",lat:37.4835,lng:126.995,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:59.86,tot:0,d:850200,r:0,q:133,al:"59㎡"}]},
+{n:"오티에르반포",gu:"서초구",addr:"잠원동 (신반포로 267)",type:"신규",lat:37.5085,lng:127.011,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:44.44,tot:0,d:666900,r:0,q:18,al:"44㎡"},{t:"장기전세",a:59.58,tot:0,d:998400,r:0,q:2,al:"59㎡"}]},
+{n:"성동자이리버뷰",gu:"성동구",addr:"용답동 (용답길 95-3)",type:"신규",lat:37.5665,lng:127.053,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:59.9,tot:0,d:686400,r:0,q:9,al:"59㎡"}]},
+{n:"영등포자이 디그니티",gu:"영등포구",addr:"양평동 (영등포로11길 19)",type:"신규",lat:37.5265,lng:126.896,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:59.99,tot:0,d:655200,r:0,q:36,al:"59㎡"}]},
+{n:"어반하임102",gu:"중랑구",addr:"중화동",type:"신규",lat:37.606,lng:127.093,notice:"51차 장기전세",mv:"2027.4~",units:[{t:"장기전세",a:45.17,tot:0,d:361140,r:0,q:1,al:"45㎡"}]}
 ];
 
 // ── 공급호수 데이터 ──
-const COUNTS_DATA={"두산위브더프레스티지":[68],"창경궁롯데캐슬시그니처(삼선5)":[30,24,32],"디에이치 아너힐즈":[23],"강동리엔파크11단지":[6,27],"강동리엔파크14단지":[12,26],"고덕 그라시움":[7],"롯데캐슬베네루체":[4],"고덕온빛채":[21],"푸르내(서울리츠1호)":[5],"꿈의숲 효성해링턴플레이스":[5],"꿈의숲 롯데캐슬(미아4)":[6],"가양동 1457-1 모듈러 행복주택":[13],"e편한세상 염창":[18],"방화스카이포레":[12,28],"e편한세상서울대입구(봉천12-2)":[8],"e편한세상 서울대입구2차(봉천12-1)":[10],"건대프라하임3차":[5],"어울채(서울리츠1호)":[12],"천왕연지마을 1":[6],"천왕연지마을 2":[16],"천왕이펜하우스8단지":[32,12,31],"항동 하버라인 지구":[14,9,118,103],"숲에리움(오류1동 청신호)":[20,5,28],"노원센트럴푸르지오(상계4)":[3],"e편한세상 청계센트럴포레(용두5)":[5],"보라매자이":[9],"상도 청석채":[14],"아크로리버하임(흑석7)":[12],"학수복합(학수)":[6],"공덕SK리더스뷰_2단지":[22],"공덕동 크로시티":[10],"마포자이더센트리지(염리2)":[4],"마포그랑자이(대흥2)":[22,4],"북한산두산위브(홍은14)":[7],"DMC에코자이(가재울6)":[11],"서초선포레":[19,15],"반포센트럴자이":[7],"왕십리자이(하왕1-5)":[14],"서울숲리버뷰자이(행당6)":[7],"금호파크힐스이편한세상(금호15)":[19],"정릉 하늘마루":[10,24],"보문파크뷰자이(보문3)":[18],"꿈의숲코오롱하늘채(장위2)":[9],"래미안아트리치(석관2)":[11],"래미안장위퍼스트하이(장위5)":[20],"꿈의숲아이파크(장위7)":[8],"장위자이레디언트(장위4)":[19],"송파파크데일 3":[34],"잠실올림픽공원아이파크":[22],"e편한세상 보라매2차":[10],"보라매 SK뷰(신길5)":[8],"용산데시앙포레(효창6)":[5],"래미안베라힐즈(녹번1-2)":[65,8],"백련산SK VIEW IPARK(응암10)":[17,8],"백련산해모로(응암11)":[8],"DMC롯데캐슬더퍼스트(수색4)":[13],"힐스테이트녹번역(응암1)":[16,4],"DMC SK뷰(수색9)":[4],"DMC센트럴자이(증산2)":[12],"은뜨락(서울리츠1호)":[66,5,3],"우디안4단지":[46],"사가정센트럴아이파크":[5],"래미안레벤투스":[24],"청담르엘":[57],"두산위브더프레스티지(장기전세)":[9],"이문3 복합공공청사":[2],"디에이치방배":[133],"오티에르반포":[20],"성동자이리버뷰":[9],"영등포자이 디그니티":[36],"어반하임102":[1]};
+const COUNTS_DATA={"두산위브더프레스티지":[68],"창경궁롯데캐슬시그니처(삼선5)":[30,24,32],"디에이치 아너힐즈":[23],"강동리엔파크11단지":[6,27],"강동리엔파크14단지":[12,26],"고덕 그라시움":[7],"롯데캐슬베네루체":[4],"고덕온빛채":[21],"푸르내(서울리츠1호)":[5],"꿈의숲 효성해링턴플레이스":[5],"꿈의숲 롯데캐슬(미아4)":[6],"가양동 1457-1 모듈러 행복주택":[13],"e편한세상 염창":[18],"방화스카이포레":[12,28],"e편한세상서울대입구(봉천12-2)":[8],"e편한세상 서울대입구2차(봉천12-1)":[10],"건대프라하임3차":[5],"어울채(서울리츠1호)":[12],"천왕연지마을 1":[6],"천왕연지마을 2":[16],"천왕이펜하우스8단지":[32,12,31],"항동 하버라인 지구":[14,9,118,103],"숲에리움(오류1동 청신호)":[20,5,28],"노원센트럴푸르지오(상계4)":[3],"e편한세상 청계센트럴포레(용두5)":[5],"보라매자이":[9],"상도 청석채":[14],"아크로리버하임(흑석7)":[12],"학수복합(학수)":[6],"공덕SK리더스뷰_2단지":[22],"공덕동 크로시티":[10],"마포자이더센트리지(염리2)":[4],"마포그랑자이(대흥2)":[22,4],"북한산두산위브(홍은14)":[7],"DMC에코자이(가재울6)":[11],"서초선포레":[19,15],"반포센트럴자이":[7],"왕십리자이(하왕1-5)":[14],"서울숲리버뷰자이(행당6)":[7],"금호파크힐스이편한세상(금호15)":[19],"정릉 하늘마루":[10,24],"보문파크뷰자이(보문3)":[18],"꿈의숲코오롱하늘채(장위2)":[9],"래미안아트리치(석관2)":[11],"래미안장위퍼스트하이(장위5)":[20],"꿈의숲아이파크(장위7)":[8],"장위자이레디언트(장위4)":[19],"송파파크데일 3":[34],"잠실올림픽공원아이파크":[22],"e편한세상 보라매2차":[10],"보라매 SK뷰(신길5)":[8],"용산데시앙포레(효창6)":[5],"래미안베라힐즈(녹번1-2)":[65,8],"백련산SK VIEW IPARK(응암10)":[17,8],"백련산해모로(응암11)":[8],"DMC롯데캐슬더퍼스트(수색4)":[13],"힐스테이트녹번역(응암1)":[16,4],"DMC SK뷰(수색9)":[4],"DMC센트럴자이(증산2)":[12],"은뜨락(서울리츠1호)":[66,5,3],"우디안4단지":[46],"사가정센트럴아이파크":[5],"래미안레벤투스":[14,10],"청담르엘":[57],"두산위브더프레스티지(장기전세)":[7,2],"이문3 복합공공청사":[2],"디에이치방배":[133],"오티에르반포":[18,2],"성동자이리버뷰":[9],"영등포자이 디그니티":[36],"어반하임102":[1]};
 // ── 공고/공급호수/입주예정 ──
 const NOTICE={id:"2026-2차 행복주택",name:"2026년 2차 행복주택",apply:"접수 9/9~9/11",open:true,doc:"notice/2026-2nd-happyhouse-notice.pdf"};
 const MOVEIN={"두산위브더프레스티지":"2027.4~","창경궁롯데캐슬시그니처(삼선5)":"2027.5~"};
@@ -286,7 +295,7 @@ DATA.forEach(function(c){
 });
 
 // ── 상태 ──
-const state={class:new Set(["대학생","청년","신혼부부","고령자","주거급여수급자","장기전세"]),type:new Set(["신규","재공급"]),notice:new Set(["2026-2차 행복주택","51차 장기전세"]),gu:new Set(),depMax:230000,rentMax:900000,areaMin:0};
+const state={class:new Set(["대학생","청년","신혼부부","고령자","주거급여수급자","장기전세"]),type:new Set(["신규","재공급"]),notice:new Set(["2026-2차 행복주택","51차 장기전세"]),gu:new Set(),depMax:1200000,rentMax:900000,areaMin:0};
 const guList=[...new Set(DATA.map(d=>d.gu))].sort();
 guList.forEach(g=>state.gu.add(g));
 
@@ -369,7 +378,7 @@ function renderList(){
       rows.push(`<tr><td>${c.n}<br><span style="color:#999;font-size:11px">${c.gu} ${c.addr}</span></td>
         <td><span class="pop-tag" style="background:${col}">${u.t}</span></td>
         <td>${u.al?u.al:u.a+'㎡'}${u.tot?`<br><span style="color:#999;font-size:11px">계약 ${u.tot}㎡</span>`:''}</td>
-        <td>${u.t==='장기전세'?'<span style="color:#e67e22;font-weight:600">전세보증금</span><br><span style="color:#999;font-size:11px">공고문 참조</span>':'보증금 '+won(u.d)+'<br>월 '+manRent(u.r)+'만원'}</td>
+        <td>${u.t==='장기전세'?'<span style="color:#e67e22;font-weight:600">전세 '+won(u.d)+'</span>':'보증금 '+won(u.d)+'<br>월 '+manRent(u.r)+'만원'}</td>
         <td style="text-align:center"><b>${u.q||0}</b>호<br><span style="color:#999;font-size:11px">단지 ${c.total}호</span></td>
         <td style="text-align:center">${c.mv}</td>
         <td>${c.type}</td>
@@ -403,7 +412,7 @@ rentMax.oninput=e=>{state.rentMax=+e.target.value; rentLbl.textContent=manRent(+
 areaMin.oninput=e=>{state.areaMin=+e.target.value; areaLbl.textContent=e.target.value+'㎡'; render();};
 document.getElementById('reset').onclick=()=>{ location.reload(); };
 // 초기 라벨
-depLbl.textContent='2.3억+'; rentLbl.textContent='90만원';
+depLbl.textContent='12억'; rentLbl.textContent='90만원';
 
 // ── 탭 ──
 tabMap.onclick=()=>{tabMap.classList.add('on');tabList.classList.remove('on');document.getElementById('map').style.display='';document.getElementById('listView').style.display='none';setTimeout(()=>map.invalidateSize(),50);};
