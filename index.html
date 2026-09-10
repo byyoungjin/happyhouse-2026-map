@@ -56,7 +56,7 @@
 <body>
 <header>
   <h1>🏠 SH 2026년 2차 행복주택 · 신청 가능 단지 지도</h1>
-  <p>인터넷 청약 2026.9.9~9.11 · 총 62개 단지 (신규 2 · 재공급 60) · 28개 단지는 📄전자팸플릿(평면도·단지정보) 바로보기, 나머지는 📐평면도 이미지검색</p>
+  <p>인터넷 청약 2026.9.9~9.11 · 총 62개 단지 (신규 2 · 재공급 60) · <b>단지 마커 클릭 → 가격·평면도·단지정보(전자팸플릿) 바로 확인</b></p>
 </header>
 <div id="wrap">
   <aside id="sidebar">
@@ -116,7 +116,9 @@
       <span id="pdfTitle" style="font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
       <span style="white-space:nowrap"><a id="pdfOpen" href="#" target="_blank" rel="noopener" style="color:#cfe0ff;font-size:12px;margin-right:14px;text-decoration:none">↗ 새 탭</a><button onclick="closePdf()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1">✕</button></span>
     </div>
+    <div id="pdfInfo" style="padding:7px 12px;background:#f4f6fb;font-size:12px;line-height:1.55;max-height:110px;overflow:auto;border-bottom:1px solid #e0e4ec"></div>
     <iframe id="pdfFrame" title="전자팸플릿" style="flex:1;border:0;width:100%"></iframe>
+    <div id="pdfFallback" style="display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;color:#555;gap:12px;padding:24px;text-align:center;font-size:14px"></div>
   </div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -140,11 +142,19 @@ const PAMPH={
  "상도 청석채":["216160",1],"보문파크뷰자이(보문3)":["182671",1],
  "꿈의숲코오롱하늘채(장위2)":["185054",1],"용산데시앙포레(효창6)":["240172",1]
 };
-function openPdf(seq,title){
-  document.getElementById('pdfTitle').textContent=title+' · SH 전자팸플릿';
-  const u='pamphlets/'+seq+'.pdf';
-  document.getElementById('pdfFrame').src=u;
-  document.getElementById('pdfOpen').href=u;
+function _setPdf(seq){const f=document.getElementById('pdfFrame'),fb=document.getElementById('pdfFallback'),o=document.getElementById('pdfOpen');const u='pamphlets/'+seq+'.pdf';f.src=u;f.style.display='';fb.style.display='none';o.href=u;o.style.display='';}
+function _setFallback(html){const f=document.getElementById('pdfFrame'),fb=document.getElementById('pdfFallback'),o=document.getElementById('pdfOpen');f.src='';f.style.display='none';fb.style.display='flex';fb.innerHTML=html;o.style.display='none';}
+function _fmtUnits(c){
+  const shown=c.units.filter(unitPassesPrice); const src=shown.length?shown:c.units;
+  return src.map(u=>{const col=COLOR[u.t]||'#888';let p=`보증금 ${won(u.d)} / 월 ${manRent(u.r)}만원`;if(u.d2)p+=` <span style="color:#999">(소득없음 ${won(u.d2)}/${manRent(u.r2)}만)</span>`;return `<span class="pop-tag" style="background:${col}">${u.t}</span> 전용 ${u.a}㎡ · ${p}`;}).join('<br>');
+}
+function openPdf(seq,title){document.getElementById('pdfTitle').textContent=title+' · SH 전자팸플릿';const info=document.getElementById('pdfInfo');info.style.display='none';info.innerHTML='';_setPdf(seq);document.getElementById('pdfModal').style.display='block';}
+function openComplex(c){
+  document.getElementById('pdfTitle').textContent=c.n+' · '+c.gu+' '+c.addr;
+  const info=document.getElementById('pdfInfo');info.style.display='';info.innerHTML=_fmtUnits(c);
+  const pv=PAMPH[c.n];
+  if(pv){ _setPdf(pv[0]); if(pv[1]) info.innerHTML+='<br><span style="color:#c0392b;font-size:11px">※ 이름·차수가 달라 동일 단지로 추정한 팸플릿입니다</span>'; }
+  else{ const q=encodeURIComponent(c.n.replace(/\(.*?\)/g,'').trim()+' 평면도'); _setFallback(`이 단지는 SH 전자팸플릿이 없습니다 <span style="color:#999">(대부분 매입형 기존 아파트)</span><br><a href="https://search.naver.com/search.naver?where=image&query=${q}" target="_blank" rel="noopener" style="color:#03c75a;font-weight:700;font-size:15px;text-decoration:none">📐 평면도 이미지 검색 열기</a>`); }
   document.getElementById('pdfModal').style.display='block';
 }
 function closePdf(){document.getElementById('pdfModal').style.display='none';document.getElementById('pdfFrame').src='';}
@@ -309,20 +319,9 @@ function render(){
     const col=classColor(shown);
     const mk=L.circleMarker([c.lat,c.lng],{radius:9,fillColor:col,color:'#ffffff',weight:2.5,opacity:1,fillOpacity:1});
     const tag=`<span class="pop-tag" style="background:${c.type==='신규'?'#1a3a6b':'#888'}">${c.type}</span>`;
-    const q=encodeURIComponent(c.n.replace(/\(.*?\)/g,'').trim()+' 평면도');
-    const pv=PAMPH[c.n];
-    let links;
-    if(pv){
-      const approx=pv[1]?` <span style="color:#c0392b;font-size:11px">※동일단지 추정</span>`:``;
-      links=`<div style="border-top:1px solid #eee;padding-top:7px;margin-top:5px;font-size:12px">`
-        +`<a href="javascript:void(0)" onclick="openPdf('${pv[0]}','${c.n.replace(/'/g,'')}')" style="display:inline-block;background:#1a3a6b;color:#fff;padding:5px 10px;border-radius:6px;text-decoration:none;font-weight:700">📄 전자팸플릿 바로보기</a>${approx}`
-        +`<div style="margin-top:5px;color:#777">평면도·단지정보 원본 · <a href="https://search.naver.com/search.naver?where=image&query=${q}" target="_blank" rel="noopener" style="color:#03c75a;text-decoration:none">📐이미지검색</a></div></div>`;
-    }else{
-      links=`<div style="border-top:1px solid #eee;padding-top:7px;margin-top:5px;font-size:12px">`
-        +`<a href="https://search.naver.com/search.naver?where=image&query=${q}" target="_blank" rel="noopener" style="color:#03c75a;font-weight:700;text-decoration:none">📐 평면도 이미지검색</a>`
-        +` · <a href="https://www.i-sh.co.kr/app/lay2/S48T560C582/sublink.do" target="_blank" rel="noopener" style="color:#1a3a6b;text-decoration:none">SH 전자팸플릿</a></div>`;
-    }
-    mk.bindPopup(`<div class="pop-name">${c.n}</div><div class="pop-addr">${tag}${c.gu} · ${c.addr}</div>${shown.map(unitHtml).join('')}${links}`,{maxWidth:280});
+    const has=PAMPH[c.n];
+    mk.bindTooltip(`<b>${c.n}</b>${has?' 📄':''}<br><span style="color:#666">${c.gu} · 클릭 → ${has?'팸플릿·평면도':'상세'} 보기</span>`);
+    mk.on('click',()=>openComplex(c));
     mk.addTo(map); markers.push(mk);
   });
   document.getElementById('cCount').textContent=cCount;
