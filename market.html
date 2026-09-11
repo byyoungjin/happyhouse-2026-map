@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소형 아파트(38㎡·방분리·헬스장) 실시간 매물 찾기</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#1a1a2e;background:#f4f6fb}
+  header{background:#1a3a6b;color:#fff;padding:16px 18px}
+  header h1{margin:0;font-size:18px}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9;line-height:1.5}
+  .spec{background:#eef2fa;margin:14px;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6}
+  .spec b{color:#1a3a6b}
+  .region{margin:14px}
+  .region h2{font-size:15px;color:#1a3a6b;margin:0 0 8px;border-left:4px solid #e67e22;padding-left:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .card{background:#fff;border:1px solid #e0e4ec;border-radius:10px;padding:10px 12px}
+  .card .n{font-weight:700;font-size:14px;margin-bottom:6px}
+  .card a{display:inline-block;font-size:12px;text-decoration:none;padding:5px 8px;border-radius:7px;margin:2px 3px 2px 0;font-weight:700}
+  .a1{background:#e8f0ff;color:#1a3a6b}
+  .a2{background:#fdeee3;color:#c0392b}
+  .foot{font-size:11px;color:#999;padding:10px 16px 24px;line-height:1.6}
+  .tip{font-size:11px;color:#e67e22;margin-top:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏠 소형 아파트(래미안베라힐즈 청년형 유사) 실시간 매물 + 대형 헬스장</h1>
+  <p>전용 <b>38㎡ · 방1(침실분리)+거실+욕조</b> 스펙과 유사한 소형 아파트/오피스텔을, 대형 헬스장 밀집 지역별로 한 번에 검색합니다. 링크는 <b>네이버 부동산·네이버 지도</b> 실시간 결과로 연결돼요.</p>
+</header>
+<div class="spec">
+  🔎 <b>검색 팁</b>: 네이버 부동산이 열리면 상단 필터에서 <b>매물종류=아파트/오피스텔</b>, <b>거래=전세·월세</b>, <b>면적=전용 33~44㎡</b>, <b>방 개수=1~2개</b>로 맞추면 래미안베라힐즈 청년형(38㎡ 방분리)과 가장 비슷해요. 대형 헬스장은 스포애니·메가짐·크런치·에이블 등 프랜차이즈 대형점 위주로 뜹니다.
+</div>
+<div id="regions"></div>
+<div class="foot">
+  ※ 매물은 실시간으로 바뀌므로 링크로 최신 결과를 확인하세요(고정 리스트를 싣지 않는 이유). ※ 대형 헬스장 유무·규모는 지도 결과에서 리뷰·사진으로 확인 권장. ※ 지역은 소형 아파트 물량 + 대형 헬스장 접근성이 좋은 서울 40개 생활권을 큐레이션했습니다.
+</div>
+<script>
+// [권역, [동/지역...]]
+const R=[
+ ["강남·서초",["역삼동","논현동","삼성동","대치동","서초동","방배동","반포동","잠원동","양재동"]],
+ ["송파·강동",["잠실동","송파동","문정동","성내동","천호동","길동","암사동","고덕동"]],
+ ["성동·광진(성수·왕십리·건대)",["성수동","행당동","금호동","옥수동","화양동","자양동","구의동"]],
+ ["마포·용산·여의도",["공덕동","도화동","합정동","망원동","대흥동","효창동","이촌동","여의도동"]],
+ ["영등포·동작·관악",["영등포동","당산동","신길동","대방동","상도동","봉천동","신림동"]],
+ ["구로·금천·양천·강서",["신도림동","구로동","개봉동","가산동","독산동","목동","신정동","화곡동","마곡동"]],
+ ["은평·서대문(DMC·연신내)",["수색동","증산동","응암동","녹번동","불광동","홍은동","남가좌동"]],
+ ["노원·도봉·강북·성북(동북권)",["상계동","중계동","공릉동","창동","미아동","수유동","길음동","장위동","이문동"]],
+];
+const land=d=>"https://m.land.naver.com/search/result/"+encodeURIComponent(d);
+const gym=d=>"https://map.naver.com/p/search/"+encodeURIComponent(d+" 대형 헬스장");
+let html="";
+R.forEach(function(r){
+  html+='<div class="region"><h2>'+r[0]+'</h2><div class="grid">';
+  r[1].forEach(function(d){
+    html+='<div class="card"><div class="n">📍 '+d+'</div>'
+      +'<a class="a1" href="'+land(d)+'" target="_blank" rel="noopener">🏠 소형 전월세 매물</a>'
+      +'<a class="a2" href="'+gym(d)+'" target="_blank" rel="noopener">🏋️ 대형 헬스장</a></div>';
+  });
+  html+='</div></div>';
+});
+document.getElementById("regions").innerHTML=html;
+</script>
+</body>
+</html>
